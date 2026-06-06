@@ -1,0 +1,7 @@
+huggingface_hub
+transformers
+requests
+diffusers
+torch
+accelerate
+google.generativeai
