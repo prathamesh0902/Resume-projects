@@ -1,8 +1,9 @@
 # GROQ API Chatbot
 
 Create a `.env` file
+GROQ_API_KEY=''
 
-`GROQ_API_KEY=''`
+Open Terminal to
 
 In Terminal run
 - `python -m venv groqcbvenv`
