@@ -1,0 +1,311 @@
+
+<h2 class="sr-only">Interactive DAS dataset with paired and independent t-test results computed live</h2>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:1.5rem 0 2rem;font-size:14px}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-tertiary);margin:1.5rem 0 .75rem}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
+.kpi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.875rem 1rem}
+.kpi-lbl{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.kpi-val{font-size:22px;font-weight:500;color:var(--color-text-primary);line-height:1}
+.kpi-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:3px}
+.up{color:var(--color-text-success)}.dn{color:var(--color-text-danger)}.neu{color:var(--color-text-secondary)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+.result-box{border-radius:var(--border-radius-md);padding:1rem;border:0.5px solid var(--color-border-tertiary)}
+.result-title{font-size:13px;font-weight:500;margin-bottom:.75rem;color:var(--color-text-primary)}
+.stat-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.stat-row:last-child{border-bottom:none}
+.stat-k{color:var(--color-text-secondary)}
+.stat-v{font-weight:500;font-family:var(--font-mono)}
+.verdict{display:inline-block;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-top:.75rem}
+.verdict-sig{background:var(--color-background-success);color:var(--color-text-success)}
+.verdict-ns{background:var(--color-background-warning);color:var(--color-text-warning)}
+tbl-wrap{overflow-x:auto;width:100%}
+table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+th{font-weight:500;font-size:11px;color:var(--color-text-secondary);padding:6px 8px;border-bottom:0.5px solid var(--color-border-secondary);text-align:left;background:var(--color-background-secondary)}
+td{padding:5px 8px;border-bottom:0.5px solid var(--color-border-tertiary);font-family:var(--font-mono);font-size:11px;color:var(--color-text-primary)}
+tr:last-child td{border-bottom:none}
+.arm-ctrl{color:#185FA5;font-weight:500}
+.arm-trt{color:#0F6E56;font-weight:500}
+.delta-pos{color:var(--color-text-success)}
+.delta-neg{color:var(--color-text-danger)}
+pre{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:1rem;font-size:11px;font-family:var(--font-mono);line-height:1.7;overflow-x:auto;color:var(--color-text-primary);white-space:pre}
+.kw{color:#185FA5}.cm{color:var(--color-text-tertiary);font-style:italic}.fn{color:#0F6E56}.st{color:#854F0B}
+</style>
+
+<div class="wrap">
+
+<div class="section-label">Sample dataset — 20 students, Segment C (At-Risk Rebuilders)</div>
+
+<div class="card" style="padding:0;overflow:hidden">
+  <div style="overflow-x:auto">
+  <table id="data-table">
+    <thead>
+      <tr>
+        <th style="width:72px">Student</th>
+        <th style="width:60px">Arm</th>
+        <th style="width:64px">Grade</th>
+        <th style="width:72px">Pre score</th>
+        <th style="width:72px">Post score</th>
+        <th style="width:72px">Delta</th>
+        <th style="width:72px">Dropped out</th>
+        <th style="width:80px">Geo index</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+  </div>
+</div>
+
+<div class="section-label">Test 1 — Paired t-test (within each arm)</div>
+<div class="two-col">
+  <div class="result-box">
+    <div class="result-title">Control arm: did scores change from baseline?</div>
+    <div class="stat-row"><span class="stat-k">Mean pre score</span><span class="stat-v" id="c-pre">—</span></div>
+    <div class="stat-row"><span class="stat-k">Mean post score</span><span class="stat-v" id="c-post">—</span></div>
+    <div class="stat-row"><span class="stat-k">Mean delta (d̄)</span><span class="stat-v" id="c-delta">—</span></div>
+    <div class="stat-row"><span class="stat-k">Std dev of deltas</span><span class="stat-v" id="c-sd">—</span></div>
+    <div class="stat-row"><span class="stat-k">t-statistic</span><span class="stat-v" id="c-t">—</span></div>
+    <div class="stat-row"><span class="stat-k">p-value (two-tailed)</span><span class="stat-v" id="c-p">—</span></div>
+    <div id="c-verdict"></div>
+  </div>
+  <div class="result-box">
+    <div class="result-title">Treatment arm: did scores change from baseline?</div>
+    <div class="stat-row"><span class="stat-k">Mean pre score</span><span class="stat-v" id="t-pre">—</span></div>
+    <div class="stat-row"><span class="stat-k">Mean post score</span><span class="stat-v" id="t-post">—</span></div>
+    <div class="stat-row"><span class="stat-k">Mean delta (d̄)</span><span class="stat-v" id="t-delta">—</span></div>
+    <div class="stat-row"><span class="stat-k">Std dev of deltas</span><span class="stat-v" id="t-sd">—</span></div>
+    <div class="stat-row"><span class="stat-k">t-statistic</span><span class="stat-v" id="t-t">—</span></div>
+    <div class="stat-row"><span class="stat-k">p-value (two-tailed)</span><span class="stat-v" id="t-p">—</span></div>
+    <div id="t-verdict"></div>
+  </div>
+</div>
+
+<div class="section-label">Test 2 — Independent t-test (treatment delta vs control delta)</div>
+<div class="result-box" style="margin-bottom:1rem">
+  <div class="result-title">Did the treatment arm improve significantly more than control?</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.75rem">
+    <div class="kpi" style="margin:0">
+      <div class="kpi-lbl">Mean delta — control</div>
+      <div class="kpi-val" id="ind-c-mean">—</div>
+    </div>
+    <div class="kpi" style="margin:0">
+      <div class="kpi-lbl">Mean delta — treatment</div>
+      <div class="kpi-val" id="ind-t-mean">—</div>
+    </div>
+    <div class="kpi" style="margin:0">
+      <div class="kpi-lbl">Difference</div>
+      <div class="kpi-val" id="ind-diff">—</div>
+    </div>
+  </div>
+  <div class="stat-row"><span class="stat-k">Pooled std error</span><span class="stat-v" id="ind-se">—</span></div>
+  <div class="stat-row"><span class="stat-k">t-statistic</span><span class="stat-v" id="ind-t">—</span></div>
+  <div class="stat-row"><span class="stat-k">Degrees of freedom</span><span class="stat-v" id="ind-df">—</span></div>
+  <div class="stat-row"><span class="stat-k">p-value (two-tailed)</span><span class="stat-v" id="ind-p">—</span></div>
+  <div class="stat-row"><span class="stat-k">Cohen's d (effect size)</span><span class="stat-v" id="ind-cohd">—</span></div>
+  <div id="ind-verdict"></div>
+</div>
+
+<div class="section-label">Python code</div>
+
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+
+<span class="cm"># ── Sample dataset ─────────────────────────────────────────</span>
+data = {
+    <span class="st">"student_id"</span>: [<span class="st">"S001"</span>,<span class="st">"S002"</span>,<span class="st">"S003"</span>,<span class="st">"S004"</span>,<span class="st">"S005"</span>,
+                   <span class="st">"S006"</span>,<span class="st">"S007"</span>,<span class="st">"S008"</span>,<span class="st">"S009"</span>,<span class="st">"S010"</span>,
+                   <span class="st">"S011"</span>,<span class="st">"S012"</span>,<span class="st">"S013"</span>,<span class="st">"S014"</span>,<span class="st">"S015"</span>,
+                   <span class="st">"S016"</span>,<span class="st">"S017"</span>,<span class="st">"S018"</span>,<span class="st">"S019"</span>,<span class="st">"S020"</span>],
+    <span class="st">"arm"</span>:        [<span class="st">"control"</span>]*10 + [<span class="st">"treatment"</span>]*10,
+    <span class="st">"grade"</span>:      [8,9,8,10,9,8,10,9,8,10,
+                   9,8,10,8,9,10,8,9,10,8],
+    <span class="st">"pre_score"</span>:  [62,58,71,65,54,68,60,57,73,61,
+                   63,56,70,64,55,67,59,58,72,62],
+    <span class="st">"post_score"</span>: [60,55,69,63,52,65,58,56,71,59,
+                   68,62,77,70,61,74,65,65,79,69],
+    <span class="st">"dropped_out"</span>:[1,0,0,1,1,0,1,0,0,1,
+                   0,0,0,0,1,0,0,0,0,0],
+    <span class="st">"geo_index"</span>:  [0.22,0.31,0.18,0.28,0.35,
+                   0.24,0.29,0.20,0.33,0.27,
+                   0.21,0.30,0.19,0.26,0.34,
+                   0.23,0.28,0.22,0.32,0.25]
+}
+df = pd.DataFrame(data)
+df[<span class="st">"delta_score"</span>] = df[<span class="st">"post_score"</span>] - df[<span class="st">"pre_score"</span>]
+
+ctrl = df[df[<span class="st">"arm"</span>] == <span class="st">"control"</span>]
+trt  = df[df[<span class="st">"arm"</span>] == <span class="st">"treatment"</span>]
+
+<span class="cm"># ── Test 1: Paired t-test (within each arm) ────────────────</span>
+<span class="cm"># H0: mean delta = 0 (no change from baseline)</span>
+t_ctrl, p_ctrl = <span class="fn">stats.ttest_rel</span>(ctrl[<span class="st">"post_score"</span>], ctrl[<span class="st">"pre_score"</span>])
+t_trt,  p_trt  = <span class="fn">stats.ttest_rel</span>(trt[<span class="st">"post_score"</span>],  trt[<span class="st">"pre_score"</span>])
+
+<span class="fn">print</span>(<span class="st">f"Control  — t={t_ctrl:.3f}, p={p_ctrl:.4f}"</span>)
+<span class="fn">print</span>(<span class="st">f"Treatment— t={t_trt:.3f},  p={p_trt:.4f}"</span>)
+
+<span class="cm"># ── Test 2: Independent t-test (delta: treatment vs control)</span>
+<span class="cm"># H0: mean(delta_trt) == mean(delta_ctrl)</span>
+t_ind, p_ind = <span class="fn">stats.ttest_ind</span>(
+    trt[<span class="st">"delta_score"</span>],
+    ctrl[<span class="st">"delta_score"</span>],
+    equal_var=<span class="kw">False</span>   <span class="cm"># Welch's — safer default</span>
+)
+
+<span class="cm"># Cohen's d</span>
+pool_std = np.<span class="fn">sqrt</span>((trt[<span class="st">"delta_score"</span>].std()**2 +
+                     ctrl[<span class="st">"delta_score"</span>].std()**2) / 2)
+cohens_d = (trt[<span class="st">"delta_score"</span>].mean() -
+            ctrl[<span class="st">"delta_score"</span>].mean()) / pool_std
+
+<span class="fn">print</span>(<span class="st">f"Independent — t={t_ind:.3f}, p={p_ind:.4f}, d={cohens_d:.3f}"</span>)</pre>
+
+<div style="margin-top:1rem;display:flex;gap:8px;flex-wrap:wrap">
+  <button onclick="sendPrompt('Explain what Welch t-test is and why equal_var=False is safer')">Why Welch vs standard? ↗</button>
+  <button onclick="sendPrompt('What is Cohen d and how do I interpret 0.8 vs 0.2 in the DAS experiment context?')">Interpreting Cohen\'s d ↗</button>
+  <button onclick="sendPrompt('Show me how to run ANCOVA on this dataset using pre_score as covariate')">Run ANCOVA instead ↗</button>
+</div>
+
+</div>
+
+<script>
+const students = [
+  {id:'S001',arm:'control', grade:8,  pre:62, post:60, drop:1, geo:0.22},
+  {id:'S002',arm:'control', grade:9,  pre:58, post:55, drop:0, geo:0.31},
+  {id:'S003',arm:'control', grade:8,  pre:71, post:69, drop:0, geo:0.18},
+  {id:'S004',arm:'control', grade:10, pre:65, post:63, drop:1, geo:0.28},
+  {id:'S005',arm:'control', grade:9,  pre:54, post:52, drop:1, geo:0.35},
+  {id:'S006',arm:'control', grade:8,  pre:68, post:65, drop:0, geo:0.24},
+  {id:'S007',arm:'control', grade:10, pre:60, post:58, drop:1, geo:0.29},
+  {id:'S008',arm:'control', grade:9,  pre:57, post:56, drop:0, geo:0.20},
+  {id:'S009',arm:'control', grade:8,  pre:73, post:71, drop:0, geo:0.33},
+  {id:'S010',arm:'control', grade:10, pre:61, post:59, drop:1, geo:0.27},
+  {id:'S011',arm:'treatment',grade:9,  pre:63, post:68, drop:0, geo:0.21},
+  {id:'S012',arm:'treatment',grade:8,  pre:56, post:62, drop:0, geo:0.30},
+  {id:'S013',arm:'treatment',grade:10, pre:70, post:77, drop:0, geo:0.19},
+  {id:'S014',arm:'treatment',grade:8,  pre:64, post:70, drop:0, geo:0.26},
+  {id:'S015',arm:'treatment',grade:9,  pre:55, post:61, drop:1, geo:0.34},
+  {id:'S016',arm:'treatment',grade:10, pre:67, post:74, drop:0, geo:0.23},
+  {id:'S017',arm:'treatment',grade:8,  pre:59, post:65, drop:0, geo:0.28},
+  {id:'S018',arm:'treatment',grade:9,  pre:58, post:65, drop:0, geo:0.22},
+  {id:'S019',arm:'treatment',grade:10, pre:72, post:79, drop:0, geo:0.32},
+  {id:'S020',arm:'treatment',grade:8,  pre:62, post:69, drop:0, geo:0.25},
+];
+
+const tbody = document.getElementById('table-body');
+students.forEach(s => {
+  const d = s.post - s.pre;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${s.id}</td>
+    <td class="${s.arm==='control'?'arm-ctrl':'arm-trt'}">${s.arm==='control'?'Control':'Treatment'}</td>
+    <td>${s.grade}</td>
+    <td>${s.pre}</td>
+    <td>${s.post}</td>
+    <td class="${d>=0?'delta-pos':'delta-neg'}">${d>0?'+':''}${d}</td>
+    <td>${s.drop?'Yes':'No'}</td>
+    <td>${s.geo.toFixed(2)}</td>`;
+  tbody.appendChild(tr);
+});
+
+function mean(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function std(arr){
+  const m=mean(arr);
+  return Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/(arr.length-1));
+}
+function pairedT(pre,post){
+  const d=pre.map((_,i)=>post[i]-pre[i]);
+  const dm=mean(d), ds=std(d), n=d.length;
+  const t=dm/(ds/Math.sqrt(n));
+  const p=2*(1-tDist(Math.abs(t),n-1));
+  return {dm,ds,t,p,n,meanPre:mean(pre),meanPost:mean(post)};
+}
+function independentT(a,b){
+  const ma=mean(a),mb=mean(b),sa=std(a),sb=std(b),na=a.length,nb=b.length;
+  const se=Math.sqrt(sa**2/na+sb**2/nb);
+  const t=(ma-mb)/se;
+  const df=(sa**2/na+sb**2/nb)**2/((sa**2/na)**2/(na-1)+(sb**2/nb)**2/(nb-1));
+  const p=2*(1-tDist(Math.abs(t),df));
+  const pooled=Math.sqrt((sa**2+sb**2)/2);
+  const cohensd=(ma-mb)/pooled;
+  return {ma,mb,se,t,df,p,cohensd};
+}
+function tDist(t,df){
+  const x=df/(df+t*t);
+  return 1-0.5*incompleteBeta(x,df/2,0.5);
+}
+function incompleteBeta(x,a,b){
+  if(x<=0)return 0; if(x>=1)return 1;
+  const lbeta=lgamma(a)+lgamma(b)-lgamma(a+b);
+  return Math.exp(a*Math.log(x)+b*Math.log(1-x)-lbeta)*betaCF(x,a,b)/a;
+}
+function betaCF(x,a,b){
+  let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap;
+  if(Math.abs(d)<1e-30)d=1e-30; d=1/d; let h=d;
+  for(let m=1;m<=100;m++){
+    let m2=2*m,aa=m*(b-m)*x/((qam+m2)*(a+m2));
+    d=1+aa*d; if(Math.abs(d)<1e-30)d=1e-30;
+    c=1+aa/c; if(Math.abs(c)<1e-30)c=1e-30;
+    d=1/d; h*=d*c;
+    aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));
+    d=1+aa*d; if(Math.abs(d)<1e-30)d=1e-30;
+    c=1+aa/c; if(Math.abs(c)<1e-30)c=1e-30;
+    d=1/d; let del=d*c; h*=del;
+    if(Math.abs(del-1)<1e-10)break;
+  }
+  return h;
+}
+function lgamma(z){
+  const c=[76.18009172947146,-86.50532032941677,24.01409824083091,
+           -1.231739572450155,0.001208650973866179,-0.000005395239384953];
+  let x=z,y=z,tmp=x+5.5; tmp-=(x+0.5)*Math.log(tmp);
+  let ser=1.000000000190015;
+  for(let i=0;i<6;i++)ser+=c[i]/++y;
+  return -tmp+Math.log(2.5066282746310005*ser/x);
+}
+
+const ctrl = students.filter(s=>s.arm==='control');
+const trt  = students.filter(s=>s.arm==='treatment');
+const cPaired = pairedT(ctrl.map(s=>s.pre), ctrl.map(s=>s.post));
+const tPaired = pairedT(trt.map(s=>s.pre),  trt.map(s=>s.post));
+const cDeltas = ctrl.map(s=>s.post-s.pre);
+const tDeltas = trt.map(s=>s.post-s.pre);
+const ind = independentT(tDeltas, cDeltas);
+
+function fmt(v,d=3){return v.toFixed(d);}
+function pFmt(p){return p<0.001?'< 0.001':p.toFixed(4);}
+function verdictHtml(p, sig_msg, ns_msg){
+  const sig=p<0.05;
+  return `<span class="verdict ${sig?'verdict-sig':'verdict-ns'}">${sig?sig_msg:ns_msg}</span>`;
+}
+
+document.getElementById('c-pre').textContent   = fmt(cPaired.meanPre,1);
+document.getElementById('c-post').textContent  = fmt(cPaired.meanPost,1);
+document.getElementById('c-delta').textContent = fmt(cPaired.dm,2);
+document.getElementById('c-sd').textContent    = fmt(cPaired.ds,2);
+document.getElementById('c-t').textContent     = fmt(cPaired.t,3);
+document.getElementById('c-p').textContent     = pFmt(cPaired.p);
+document.getElementById('c-verdict').innerHTML = verdictHtml(cPaired.p,'Significant decline','No significant change');
+
+document.getElementById('t-pre').textContent   = fmt(tPaired.meanPre,1);
+document.getElementById('t-post').textContent  = fmt(tPaired.meanPost,1);
+document.getElementById('t-delta').textContent = '+' + fmt(tPaired.dm,2);
+document.getElementById('t-sd').textContent    = fmt(tPaired.ds,2);
+document.getElementById('t-t').textContent     = fmt(tPaired.t,3);
+document.getElementById('t-p').textContent     = pFmt(tPaired.p);
+document.getElementById('t-verdict').innerHTML = verdictHtml(tPaired.p,'Significant improvement','No significant change');
+
+document.getElementById('ind-c-mean').textContent = fmt(ind.mb,2);
+document.getElementById('ind-t-mean').textContent = '+' + fmt(ind.ma,2);
+document.getElementById('ind-diff').textContent   = '+' + fmt(ind.ma-ind.mb,2);
+document.getElementById('ind-se').textContent     = fmt(ind.se,3);
+document.getElementById('ind-t').textContent      = fmt(ind.t,3);
+document.getElementById('ind-df').textContent     = fmt(ind.df,1);
+document.getElementById('ind-p').textContent      = pFmt(ind.p);
+document.getElementById('ind-cohd').textContent   = fmt(ind.cohensd,3) + ' (large effect)';
+document.getElementById('ind-verdict').innerHTML  = verdictHtml(ind.p,'Treatment significantly outperforms control','No significant difference');
+</script>

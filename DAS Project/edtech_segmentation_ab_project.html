@@ -1,0 +1,699 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand-midnight: #0F1724;
+    --brand-ink: #1A2535;
+    --brand-slate: #253447;
+    --brand-steel: #374B63;
+    --brand-muted: #6B84A3;
+    --brand-soft: #A8BBCF;
+    --brand-pale: #E8EEF5;
+    --brand-white: #F5F8FC;
+    --accent-gold: #F5A623;
+    --accent-teal: #1DC9A0;
+    --accent-coral: #FF6B6B;
+    --accent-violet: #9B6BFF;
+    --accent-sky: #4DB8FF;
+    --accent-mint: #00E5B0;
+    --accent-rose: #FF6B9D;
+    --seg-a: #F5A623;
+    --seg-b: #1DC9A0;
+    --seg-c: #9B6BFF;
+    --seg-d: #FF6B6B;
+    --seg-e: #4DB8FF;
+  }
+
+  body { background: var(--brand-midnight); font-family: 'Sora', sans-serif; color: var(--brand-white); overflow-x: hidden; }
+
+  .page { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  /* ── Header ── */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+  .header-left .eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-gold); font-weight: 500; margin-bottom: 8px; }
+  .header-left h1 { font-family: 'DM Serif Display', serif; font-size: 38px; line-height: 1.15; color: #fff; }
+  .header-left h1 em { font-style: italic; color: var(--accent-teal); }
+  .header-left .subtitle { font-size: 14px; color: var(--brand-soft); margin-top: 10px; max-width: 480px; line-height: 1.7; }
+  .header-right { text-align: right; }
+  .header-right .years { font-family: 'DM Serif Display', serif; font-size: 72px; line-height: 1; color: var(--brand-steel); }
+  .header-right .years-label { font-size: 11px; color: var(--brand-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ── Section titles ── */
+  .sec-title { font-size: 11px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--brand-muted); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .sec-title::after { content: ''; flex: 1; height: 1px; background: var(--brand-slate); }
+
+  /* ── Schema section ── */
+  .schema-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px; }
+  .schema-table { background: var(--brand-ink); border: 1px solid var(--brand-slate); border-radius: 12px; overflow: hidden; }
+  .schema-table.primary { border-color: var(--accent-teal); }
+  .schema-table.highlight { border-color: var(--accent-gold); }
+  .schema-header { padding: 10px 14px 8px; border-bottom: 1px solid var(--brand-slate); }
+  .schema-icon { font-size: 16px; margin-bottom: 4px; }
+  .schema-name { font-size: 12px; font-weight: 600; color: #fff; }
+  .schema-role { font-size: 10px; color: var(--brand-muted); margin-top: 2px; }
+  .schema-fields { padding: 8px 0; }
+  .field-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 14px; font-size: 10px; }
+  .field-row:hover { background: var(--brand-slate); }
+  .field-name { color: var(--brand-soft); font-family: 'DM Mono', monospace; }
+  .field-name.pk { color: var(--accent-gold); }
+  .field-name.fk { color: var(--accent-sky); }
+  .field-type { color: var(--brand-muted); font-family: 'DM Mono', monospace; font-size: 9px; }
+  .field-type.num { color: var(--accent-teal); }
+  .field-type.id { color: var(--accent-violet); }
+  .schema-join-hint { font-size: 10px; color: var(--brand-muted); margin-top: 6px; padding: 0 14px 10px; }
+  .schema-join-hint span { color: var(--accent-sky); }
+
+  .rel-arrows { position: relative; height: 28px; display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 32px; }
+  .rel-label { font-size: 10px; color: var(--brand-muted); font-family: 'DM Mono', monospace; background: var(--brand-midnight); padding: 0 8px; border-radius: 4px; border: 1px solid var(--brand-slate); white-space: nowrap; }
+
+  /* ── Segment cards ── */
+  .segments-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 40px; }
+  .seg-card { border-radius: 12px; padding: 16px; border: 1px solid var(--brand-slate); background: var(--brand-ink); position: relative; overflow: hidden; cursor: pointer; transition: transform .15s, border-color .15s; }
+  .seg-card:hover { transform: translateY(-2px); }
+  .seg-card::before { content: ''; position: absolute; inset: 0; opacity: 0.05; }
+  .seg-card[data-seg="A"]::before { background: var(--seg-a); }
+  .seg-card[data-seg="B"]::before { background: var(--seg-b); }
+  .seg-card[data-seg="C"]::before { background: var(--seg-c); }
+  .seg-card[data-seg="D"]::before { background: var(--seg-d); }
+  .seg-card[data-seg="E"]::before { background: var(--seg-e); }
+  .seg-badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-bottom: 10px; letter-spacing: 0.06em; }
+  .seg-card[data-seg="A"] .seg-badge { background: #3D2A00; color: var(--seg-a); }
+  .seg-card[data-seg="B"] .seg-badge { background: #003D2A; color: var(--seg-b); }
+  .seg-card[data-seg="C"] .seg-badge { background: #2A1A4D; color: var(--seg-c); }
+  .seg-card[data-seg="D"] .seg-badge { background: #3D1A1A; color: var(--seg-d); }
+  .seg-card[data-seg="E"] .seg-badge { background: #0D2D3D; color: var(--seg-e); }
+  .seg-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .seg-desc { font-size: 11px; color: var(--brand-soft); line-height: 1.5; margin-bottom: 10px; }
+  .seg-stats { display: flex; flex-direction: column; gap: 4px; }
+  .seg-stat { display: flex; justify-content: space-between; font-size: 10px; }
+  .seg-stat-label { color: var(--brand-muted); }
+  .seg-stat-val { font-weight: 600; font-family: 'DM Mono', monospace; }
+  .seg-card[data-seg="A"] .seg-stat-val { color: var(--seg-a); }
+  .seg-card[data-seg="B"] .seg-stat-val { color: var(--seg-b); }
+  .seg-card[data-seg="C"] .seg-stat-val { color: var(--seg-c); }
+  .seg-card[data-seg="D"] .seg-stat-val { color: var(--seg-d); }
+  .seg-card[data-seg="E"] .seg-stat-val { color: var(--seg-e); }
+  .seg-size-bar { height: 3px; border-radius: 2px; margin-top: 10px; }
+  .seg-card[data-seg="A"] .seg-size-bar { background: var(--seg-a); width: 68%; }
+  .seg-card[data-seg="B"] .seg-size-bar { background: var(--seg-b); width: 50%; }
+  .seg-card[data-seg="C"] .seg-size-bar { background: var(--seg-c); width: 35%; }
+  .seg-card[data-seg="D"] .seg-size-bar { background: var(--seg-d); width: 22%; }
+  .seg-card[data-seg="E"] .seg-size-bar { background: var(--seg-e); width: 14%; }
+
+  /* ── ML Pipeline ── */
+  .pipeline { display: flex; align-items: stretch; gap: 0; margin-bottom: 40px; }
+  .pipe-step { flex: 1; background: var(--brand-ink); border: 1px solid var(--brand-slate); padding: 16px 12px; position: relative; }
+  .pipe-step:first-child { border-radius: 12px 0 0 12px; }
+  .pipe-step:last-child { border-radius: 0 12px 12px 0; }
+  .pipe-step + .pipe-step { border-left: none; }
+  .pipe-step-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--brand-muted); margin-bottom: 6px; }
+  .pipe-step-title { font-size: 12px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .pipe-step-body { font-size: 10px; color: var(--brand-soft); line-height: 1.6; }
+  .pipe-step-tag { display: inline-block; font-size: 9px; padding: 2px 7px; border-radius: 3px; margin-top: 8px; font-family: 'DM Mono', monospace; }
+  .tag-green { background: #0D3D2A; color: var(--accent-teal); }
+  .tag-violet { background: #1E1040; color: var(--accent-violet); }
+  .tag-gold { background: #3D2800; color: var(--accent-gold); }
+  .tag-sky { background: #082233; color: var(--accent-sky); }
+  .tag-coral { background: #3D0D0D; color: var(--accent-coral); }
+  .pipe-arrow { width: 20px; display: flex; align-items: center; justify-content: center; color: var(--brand-muted); font-size: 14px; flex-shrink: 0; background: var(--brand-ink); border-top: 1px solid var(--brand-slate); border-bottom: 1px solid var(--brand-slate); z-index: 1; }
+
+  /* ── AB Tests ── */
+  .ab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+  .ab-card { background: var(--brand-ink); border: 1px solid var(--brand-slate); border-radius: 12px; padding: 18px; }
+  .ab-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .ab-title { font-size: 13px; font-weight: 600; color: #fff; }
+  .ab-hypothesis { font-size: 11px; color: var(--brand-soft); margin-top: 3px; font-style: italic; }
+  .ab-status { font-size: 10px; padding: 3px 9px; border-radius: 20px; font-weight: 600; }
+  .status-live { background: #0D3D2A; color: var(--accent-teal); }
+  .status-completed { background: #082233; color: var(--accent-sky); }
+  .status-planned { background: #2A1A00; color: var(--accent-gold); }
+  .ab-variants { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .ab-variant { background: var(--brand-midnight); border-radius: 8px; padding: 10px; }
+  .ab-variant-label { font-size: 10px; color: var(--brand-muted); margin-bottom: 4px; font-family: 'DM Mono', monospace; }
+  .ab-variant-name { font-size: 11px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+  .ab-metric { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 3px; }
+  .ab-metric-label { color: var(--brand-muted); }
+  .ab-metric-val { font-family: 'DM Mono', monospace; font-weight: 600; }
+  .val-pos { color: var(--accent-teal); }
+  .val-neg { color: var(--accent-coral); }
+  .val-neu { color: var(--brand-soft); }
+  .ab-lift { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; }
+  .lift-badge { padding: 3px 10px; border-radius: 20px; font-weight: 700; font-size: 12px; font-family: 'DM Mono', monospace; }
+  .lift-pos { background: #0D3D2A; color: var(--accent-teal); }
+  .lift-neg { background: #3D0D0D; color: var(--accent-coral); }
+  .lift-label { color: var(--brand-muted); font-size: 10px; }
+  .ab-sig { font-size: 10px; color: var(--brand-soft); }
+  .ab-sig strong { color: var(--accent-gold); }
+
+  /* ── Outcome metrics ── */
+  .outcomes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 40px; }
+  .outcome-card { background: var(--brand-ink); border: 1px solid var(--brand-slate); border-radius: 12px; padding: 18px; text-align: center; }
+  .outcome-icon { font-size: 24px; margin-bottom: 8px; }
+  .outcome-val { font-family: 'DM Serif Display', serif; font-size: 32px; line-height: 1; margin-bottom: 4px; }
+  .outcome-label { font-size: 11px; color: var(--brand-muted); }
+  .outcome-delta { font-size: 10px; margin-top: 6px; font-family: 'DM Mono', monospace; }
+  .delta-up { color: var(--accent-teal); }
+  .delta-down { color: var(--accent-coral); }
+
+  /* ── Score chart ── */
+  .score-chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+  .chart-card { background: var(--brand-ink); border: 1px solid var(--brand-slate); border-radius: 12px; padding: 18px; }
+  .chart-card-title { font-size: 12px; font-weight: 600; color: var(--brand-soft); margin-bottom: 16px; }
+
+  /* bar chart */
+  .bar-chart { display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; }
+  .bar-seg-label { font-size: 10px; font-family: 'DM Mono', monospace; width: 16px; font-weight: 600; }
+  .bar-track { flex: 1; height: 8px; background: var(--brand-slate); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-val { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--brand-soft); width: 30px; text-align: right; }
+  .bar-subject { font-size: 10px; color: var(--brand-muted); width: 50px; }
+
+  /* scatter plot */
+  .scatter-wrap { position: relative; height: 180px; }
+  .scatter-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; transform: translate(-50%,-50%); opacity: 0.75; }
+  .scatter-label-x { position: absolute; bottom: 0; left: 0; right: 0; text-align: center; font-size: 10px; color: var(--brand-muted); }
+  .scatter-label-y { position: absolute; top: 0; left: 0; bottom: 0; display: flex; align-items: center; font-size: 10px; color: var(--brand-muted); writing-mode: vertical-lr; transform: rotate(180deg); }
+
+  /* ── District heatmap ── */
+  .heatmap-wrap { margin-bottom: 40px; }
+  .heatmap-grid { display: grid; grid-template-columns: 100px repeat(10, 1fr); gap: 3px; }
+  .hm-cell { height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-family: 'DM Mono', monospace; }
+  .hm-header { color: var(--brand-muted); font-size: 10px; }
+  .hm-row-label { color: var(--brand-soft); font-size: 10px; display: flex; align-items: center; }
+
+  /* ── Footer ── */
+  .footer { border-top: 1px solid var(--brand-slate); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--brand-muted); }
+  .footer-brand { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--brand-soft); }
+
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .seg-card, .ab-card, .outcome-card, .chart-card, .pipe-step { animation: fadeSlide .4s ease both; }
+</style>
+
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <div class="header-left">
+      <div class="eyebrow">EduSpark Analytics · Intelligence Platform</div>
+      <h1>Customer Segmentation<br>&amp; <em>A/B Testing</em> Suite</h1>
+      <p class="subtitle">Personalized learning interventions driven by ML clustering, behavioral scoring, and controlled experimentation across 12,400+ schools in 47 districts. Grades 8–12.</p>
+    </div>
+    <div class="header-right">
+      <div class="years">50</div>
+      <div class="years-label">Years of data heritage</div>
+    </div>
+  </div>
+
+  <!-- ── DATA SCHEMA ── -->
+  <div class="sec-title">Entity Relationship Model — Linked Data Architecture</div>
+  <div class="schema-grid">
+
+    <div class="schema-table primary">
+      <div class="schema-header">
+        <div class="schema-icon">🎓</div>
+        <div class="schema-name">students</div>
+        <div class="schema-role">Core entity · fact table</div>
+      </div>
+      <div class="schema-fields">
+        <div class="field-row"><span class="field-name pk">student_id</span><span class="field-type id">uuid PK</span></div>
+        <div class="field-row"><span class="field-name fk">school_id</span><span class="field-type id">uuid FK</span></div>
+        <div class="field-row"><span class="field-name fk">cohort_id</span><span class="field-type id">uuid FK</span></div>
+        <div class="field-row"><span class="field-name">grade</span><span class="field-type">int(8..12)</span></div>
+        <div class="field-row"><span class="field-name">age</span><span class="field-type">int</span></div>
+        <div class="field-row"><span class="field-name">gender_code</span><span class="field-type">char(1)</span></div>
+        <div class="field-row"><span class="field-name">first_enrolled</span><span class="field-type">date</span></div>
+        <div class="field-row"><span class="field-name">ell_status</span><span class="field-type">bool</span></div>
+        <div class="field-row"><span class="field-name">iep_flag</span><span class="field-type">bool</span></div>
+        <div class="field-row"><span class="field-name">free_lunch</span><span class="field-type">bool</span></div>
+      </div>
+    </div>
+
+    <div class="schema-table highlight">
+      <div class="schema-header">
+        <div class="schema-icon">📊</div>
+        <div class="schema-name">assessment_scores</div>
+        <div class="schema-role">Measurement · time-series</div>
+      </div>
+      <div class="schema-fields">
+        <div class="field-row"><span class="field-name pk">score_id</span><span class="field-type id">uuid PK</span></div>
+        <div class="field-row"><span class="field-name fk">student_id</span><span class="field-type id">uuid FK</span></div>
+        <div class="field-row"><span class="field-name">test_date</span><span class="field-type">date</span></div>
+        <div class="field-row"><span class="field-name">subject</span><span class="field-type">enum</span></div>
+        <div class="field-row"><span class="field-name">raw_score</span><span class="field-type num">float</span></div>
+        <div class="field-row"><span class="field-name">percentile</span><span class="field-type num">float</span></div>
+        <div class="field-row"><span class="field-name">grade_equiv</span><span class="field-type num">float</span></div>
+        <div class="field-row"><span class="field-name">geo_score</span><span class="field-type num">float</span></div>
+        <div class="field-row"><span class="field-name">stanine</span><span class="field-type num">int(1..9)</span></div>
+        <div class="field-row"><span class="field-name">is_makeup</span><span class="field-type">bool</span></div>
+      </div>
+    </div>
+
+    <div class="schema-table">
+      <div class="schema-header">
+        <div class="schema-icon">🏫</div>
+        <div class="schema-name">schools</div>
+        <div class="schema-role">Dimension · geo context</div>
+      </div>
+      <div class="schema-fields">
+        <div class="field-row"><span class="field-name pk">school_id</span><span class="field-type id">uuid PK</span></div>
+        <div class="field-row"><span class="field-name fk">district_id</span><span class="field-type id">uuid FK</span></div>
+        <div class="field-row"><span class="field-name">school_name</span><span class="field-type">text</span></div>
+        <div class="field-row"><span class="field-name">school_type</span><span class="field-type">enum</span></div>
+        <div class="field-row"><span class="field-name">latitude</span><span class="field-type num">float</span></div>
+        <div class="field-row"><span class="field-name">longitude</span><span class="field-type num">float</span></div>
+        <div class="field-row"><span class="field-name">locale_code</span><span class="field-type">enum</span></div>
+        <div class="field-row"><span class="field-name">enrollment</span><span class="field-type num">int</span></div>
+        <div class="field-row"><span class="field-name">title1_status</span><span class="field-type">bool</span></div>
+        <div class="field-row"><span class="field-name">avg_class_size</span><span class="field-type num">float</span></div>
+      </div>
+    </div>
+
+    <div class="schema-table">
+      <div class="schema-header">
+        <div class="schema-icon">🏛️</div>
+        <div class="schema-name">districts</div>
+        <div class="schema-role">Dimension · policy level</div>
+      </div>
+      <div class="schema-fields">
+        <div class="field-row"><span class="field-name pk">district_id</span><span class="field-type id">uuid PK</span></div>
+        <div class="field-row"><span class="field-name">district_name</span><span class="field-type">text</span></div>
+        <div class="field-row"><span class="field-name">state_code</span><span class="field-type">char(2)</span></div>
+        <div class="field-row"><span class="field-name">region</span><span class="field-type">enum</span></div>
+        <div class="field-row"><span class="field-name">funding_tier</span><span class="field-type">int(1..5)</span></div>
+        <div class="field-row"><span class="field-name">urbanicity</span><span class="field-type">enum</span></div>
+        <div class="field-row"><span class="field-name">tech_adoption</span><span class="field-type num">float</span></div>
+        <div class="field-row"><span class="field-name">contract_start</span><span class="field-type">date</span></div>
+        <div class="field-row"><span class="field-name">arn</span><span class="field-type">text</span></div>
+        <div class="field-row"><span class="field-name">seats_licensed</span><span class="field-type num">int</span></div>
+      </div>
+    </div>
+
+    <div class="schema-table">
+      <div class="schema-header">
+        <div class="schema-icon">🧪</div>
+        <div class="schema-name">ab_assignments</div>
+        <div class="schema-role">Experiment · derived table</div>
+      </div>
+      <div class="schema-fields">
+        <div class="field-row"><span class="field-name pk">assignment_id</span><span class="field-type id">uuid PK</span></div>
+        <div class="field-row"><span class="field-name fk">student_id</span><span class="field-type id">uuid FK</span></div>
+        <div class="field-row"><span class="field-name fk">experiment_id</span><span class="field-type id">uuid FK</span></div>
+        <div class="field-row"><span class="field-name">variant</span><span class="field-type">enum</span></div>
+        <div class="field-row"><span class="field-name">assigned_at</span><span class="field-type">timestamp</span></div>
+        <div class="field-row"><span class="field-name">segment_label</span><span class="field-type">char(1)</span></div>
+        <div class="field-row"><span class="field-name">pre_score</span><span class="field-type num">float</span></div>
+        <div class="field-row"><span class="field-name">post_score</span><span class="field-type num">float</span></div>
+        <div class="field-row"><span class="field-name">delta_score</span><span class="field-type num">float</span></div>
+        <div class="field-row"><span class="field-name">converted</span><span class="field-type">bool</span></div>
+      </div>
+      <div class="schema-join-hint">Links via <span>student_id → students</span> and <span>experiment_id → experiments</span></div>
+    </div>
+
+  </div>
+
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;">
+    <span class="rel-label">students ←→ assessment_scores (1:N)</span>
+    <span class="rel-label">students → schools → districts (N:1:1)</span>
+    <span class="rel-label">students ←→ ab_assignments (1:N)</span>
+    <span class="rel-label">assessment_scores ⊕ districts = ml_feature_matrix</span>
+  </div>
+
+  <!-- ── ML PIPELINE ── -->
+  <div class="sec-title">ML Pipeline — From Raw Scores to Segments</div>
+  <div class="pipeline">
+    <div class="pipe-step" style="animation-delay:.05s">
+      <div class="pipe-step-num">01</div>
+      <div class="pipe-step-title">Feature Engineering</div>
+      <div class="pipe-step-body">Rolling 3-year score deltas, subject strength ratios, geo-index normalization, socioeconomic proxy scores</div>
+      <span class="pipe-step-tag tag-sky">Pandas + dbt</span>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step" style="animation-delay:.1s">
+      <div class="pipe-step-num">02</div>
+      <div class="pipe-step-title">Dimensionality Reduction</div>
+      <div class="pipe-step-body">PCA (12 → 4 components, 89% variance retained) + UMAP for cluster visualization embedding</div>
+      <span class="pipe-step-tag tag-violet">scikit-learn</span>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step" style="animation-delay:.15s">
+      <div class="pipe-step-num">03</div>
+      <div class="pipe-step-title">Clustering</div>
+      <div class="pipe-step-body">K-Means (k=5 by elbow + silhouette), DBSCAN for outlier cohorts, hierarchical for district roll-up</div>
+      <span class="pipe-step-tag tag-green">k=5 · sil=0.71</span>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step" style="animation-delay:.2s">
+      <div class="pipe-step-num">04</div>
+      <div class="pipe-step-title">Segment Scoring</div>
+      <div class="pipe-step-body">Random Forest classifier trained on labeled cohorts (F1=0.88), LTV regression per segment, churn propensity</div>
+      <span class="pipe-step-tag tag-gold">RF · XGBoost</span>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step" style="animation-delay:.25s">
+      <div class="pipe-step-num">05</div>
+      <div class="pipe-step-title">Experiment Design</div>
+      <div class="pipe-step-body">Power analysis per segment (α=0.05, β=0.20), stratified random assignment by school &amp; grade</div>
+      <span class="pipe-step-tag tag-coral">Bayesian + freq.</span>
+    </div>
+  </div>
+
+  <!-- ── CUSTOMER SEGMENTS ── -->
+  <div class="sec-title">5 Identified Customer Segments — K-Means · n = 2.1M Students</div>
+  <div class="segments-grid">
+    <div class="seg-card" data-seg="A" style="animation-delay:.05s" onclick="sendPrompt('Tell me more about the Rising Stars segment and what interventions work best')">
+      <span class="seg-badge">SEG A</span>
+      <div class="seg-name">🌟 Rising Stars</div>
+      <div class="seg-desc">High-trajectory students in underfunded districts. Strong math, developing English. Grade 9–11.</div>
+      <div class="seg-stats">
+        <div class="seg-stat"><span class="seg-stat-label">Students</span><span class="seg-stat-val">683K</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">Avg score Δ/yr</span><span class="seg-stat-val">+8.4%</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">Geo index</span><span class="seg-stat-val">0.38 (Rural)</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">LTV score</span><span class="seg-stat-val">87/100</span></div>
+      </div>
+      <div class="seg-size-bar"></div>
+    </div>
+    <div class="seg-card" data-seg="B" style="animation-delay:.1s" onclick="sendPrompt('What are the best A/B test strategies for the Suburban Achievers segment?')">
+      <span class="seg-badge">SEG B</span>
+      <div class="seg-name">🏆 Suburban Achievers</div>
+      <div class="seg-desc">Well-resourced, consistent performers. High science scores. Grades 10–12. Parent engagement high.</div>
+      <div class="seg-stats">
+        <div class="seg-stat"><span class="seg-stat-label">Students</span><span class="seg-stat-val">502K</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">Avg score Δ/yr</span><span class="seg-stat-val">+4.1%</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">Geo index</span><span class="seg-stat-val">0.78 (Suburban)</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">LTV score</span><span class="seg-stat-val">94/100</span></div>
+      </div>
+      <div class="seg-size-bar"></div>
+    </div>
+    <div class="seg-card" data-seg="C" style="animation-delay:.15s" onclick="sendPrompt('How should we target the At-Risk Rebuilders segment differently from other groups?')">
+      <span class="seg-badge">SEG C</span>
+      <div class="seg-name">🔧 At-Risk Rebuilders</div>
+      <div class="seg-desc">Declining trajectories, high absenteeism proxy. Need scaffolded support. Grades 8–10 concentrated.</div>
+      <div class="seg-stats">
+        <div class="seg-stat"><span class="seg-stat-label">Students</span><span class="seg-stat-val">355K</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">Avg score Δ/yr</span><span class="seg-stat-val">-2.1%</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">Geo index</span><span class="seg-stat-val">0.22 (Urban)</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">LTV score</span><span class="seg-stat-val">52/100</span></div>
+      </div>
+      <div class="seg-size-bar"></div>
+    </div>
+    <div class="seg-card" data-seg="D" style="animation-delay:.2s" onclick="sendPrompt('What product features should we build for the STEM Specialists segment?')">
+      <span class="seg-badge">SEG D</span>
+      <div class="seg-name">⚗️ STEM Specialists</div>
+      <div class="seg-desc">Extreme math/science advantage, below-avg English. Gifted programs. Grade 11–12, urban elite schools.</div>
+      <div class="seg-stats">
+        <div class="seg-stat"><span class="seg-stat-label">Students</span><span class="seg-stat-val">218K</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">Avg score Δ/yr</span><span class="seg-stat-val">+11.2%</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">Geo index</span><span class="seg-stat-val">0.91 (Metro)</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">LTV score</span><span class="seg-stat-val">91/100</span></div>
+      </div>
+      <div class="seg-size-bar"></div>
+    </div>
+    <div class="seg-card" data-seg="E" style="animation-delay:.25s" onclick="sendPrompt('What does the ELL Emerging Learners segment need from our product and what experiment should we run first?')">
+      <span class="seg-badge">SEG E</span>
+      <div class="seg-name">🌐 ELL Emerging</div>
+      <div class="seg-desc">English Language Learners. High geo-variability. Low English, moderate math. Fastest-growing cohort.</div>
+      <div class="seg-stats">
+        <div class="seg-stat"><span class="seg-stat-label">Students</span><span class="seg-stat-val">142K</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">Avg score Δ/yr</span><span class="seg-stat-val">+6.8%</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">Geo index</span><span class="seg-stat-val">0.44 (Mixed)</span></div>
+        <div class="seg-stat"><span class="seg-stat-label">LTV score</span><span class="seg-stat-val">73/100</span></div>
+      </div>
+      <div class="seg-size-bar"></div>
+    </div>
+  </div>
+
+  <!-- ── A/B TESTS ── -->
+  <div class="sec-title">Active &amp; Completed A/B Experiments</div>
+  <div class="ab-grid">
+
+    <div class="ab-card" style="animation-delay:.05s">
+      <div class="ab-header">
+        <div>
+          <div class="ab-title">Adaptive Hint Frequency</div>
+          <div class="ab-hypothesis">"More frequent micro-hints increase math score velocity in Seg A"</div>
+        </div>
+        <span class="ab-status status-live">● Live</span>
+      </div>
+      <div class="ab-variants">
+        <div class="ab-variant">
+          <div class="ab-variant-label">CONTROL · A</div>
+          <div class="ab-variant-name">Standard hints on error</div>
+          <div class="ab-metric"><span class="ab-metric-label">Score Δ</span><span class="ab-metric-val val-neu">+3.2%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">Completion</span><span class="ab-metric-val val-neu">71%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">n</span><span class="ab-metric-val val-neu">12,440</span></div>
+        </div>
+        <div class="ab-variant">
+          <div class="ab-variant-label">TREATMENT · B</div>
+          <div class="ab-variant-name">Proactive micro-hints</div>
+          <div class="ab-metric"><span class="ab-metric-label">Score Δ</span><span class="ab-metric-val val-pos">+7.8%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">Completion</span><span class="ab-metric-val val-pos">83%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">n</span><span class="ab-metric-val val-neu">12,381</span></div>
+        </div>
+      </div>
+      <div class="ab-lift"><span class="lift-badge lift-pos">+143%</span><span class="lift-label">relative lift · </span><span class="ab-sig">p &lt; 0.001 · <strong>95% CI [3.8, 6.4]</strong></span></div>
+    </div>
+
+    <div class="ab-card" style="animation-delay:.1s">
+      <div class="ab-header">
+        <div>
+          <div class="ab-title">Geo-Contextualized Problems</div>
+          <div class="ab-hypothesis">"Locally-anchored science scenarios improve engagement in Seg E"</div>
+        </div>
+        <span class="ab-status status-completed">✓ Completed</span>
+      </div>
+      <div class="ab-variants">
+        <div class="ab-variant">
+          <div class="ab-variant-label">CONTROL · A</div>
+          <div class="ab-variant-name">Generic problems</div>
+          <div class="ab-metric"><span class="ab-metric-label">Engagement</span><span class="ab-metric-val val-neu">58%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">Retention D30</span><span class="ab-metric-val val-neu">44%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">n</span><span class="ab-metric-val val-neu">8,220</span></div>
+        </div>
+        <div class="ab-variant">
+          <div class="ab-variant-label">TREATMENT · B</div>
+          <div class="ab-variant-name">Geo-contextualized</div>
+          <div class="ab-metric"><span class="ab-metric-label">Engagement</span><span class="ab-metric-val val-pos">74%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">Retention D30</span><span class="ab-metric-val val-pos">61%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">n</span><span class="ab-metric-val val-neu">8,195</span></div>
+        </div>
+      </div>
+      <div class="ab-lift"><span class="lift-badge lift-pos">+38%</span><span class="lift-label">D30 retention lift · </span><span class="ab-sig">p = 0.004 · <strong>Rolled out to Seg E</strong></span></div>
+    </div>
+
+    <div class="ab-card" style="animation-delay:.15s">
+      <div class="ab-header">
+        <div>
+          <div class="ab-title">Difficulty Auto-Scaling (DAS)</div>
+          <div class="ab-hypothesis">"IRT-based adaptive difficulty reduces frustration in Seg C"</div>
+        </div>
+        <span class="ab-status status-live">● Live</span>
+      </div>
+      <div class="ab-variants">
+        <div class="ab-variant">
+          <div class="ab-variant-label">CONTROL · A</div>
+          <div class="ab-variant-name">Fixed curriculum path</div>
+          <div class="ab-metric"><span class="ab-metric-label">Dropout rate</span><span class="ab-metric-val val-neg">31%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">Score Δ</span><span class="ab-metric-val val-neg">-1.8%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">n</span><span class="ab-metric-val val-neu">9,110</span></div>
+        </div>
+        <div class="ab-variant">
+          <div class="ab-variant-label">TREATMENT · B</div>
+          <div class="ab-variant-name">IRT adaptive path</div>
+          <div class="ab-metric"><span class="ab-metric-label">Dropout rate</span><span class="ab-metric-val val-pos">18%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">Score Δ</span><span class="ab-metric-val val-pos">+2.4%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">n</span><span class="ab-metric-val val-neu">9,084</span></div>
+        </div>
+      </div>
+      <div class="ab-lift"><span class="lift-badge lift-pos">-42%</span><span class="lift-label">dropout reduction · </span><span class="ab-sig">p = 0.018 · <strong>Bayesian: 97.2% prob. superior</strong></span></div>
+    </div>
+
+    <div class="ab-card" style="animation-delay:.2s">
+      <div class="ab-header">
+        <div>
+          <div class="ab-title">Teacher Dashboard Nudges</div>
+          <div class="ab-hypothesis">"Weekly AI-generated insight nudges lift district renewal rates"</div>
+        </div>
+        <span class="ab-status status-planned">⏳ Planned Q3</span>
+      </div>
+      <div class="ab-variants">
+        <div class="ab-variant">
+          <div class="ab-variant-label">CONTROL · A</div>
+          <div class="ab-variant-name">Standard reports</div>
+          <div class="ab-metric"><span class="ab-metric-label">Renewal est.</span><span class="ab-metric-val val-neu">78%</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">Login freq.</span><span class="ab-metric-val val-neu">1.2×/wk</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">n (schools)</span><span class="ab-metric-val val-neu">600</span></div>
+        </div>
+        <div class="ab-variant">
+          <div class="ab-variant-label">TREATMENT · B</div>
+          <div class="ab-variant-name">AI insight nudges</div>
+          <div class="ab-metric"><span class="ab-metric-label">Renewal est.</span><span class="ab-metric-val val-pos">85%+</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">Login freq.</span><span class="ab-metric-val val-pos">2.8×/wk</span></div>
+          <div class="ab-metric"><span class="ab-metric-label">n (schools)</span><span class="ab-metric-val val-neu">600</span></div>
+        </div>
+      </div>
+      <div class="ab-lift"><span class="lift-badge" style="background:#2A1A00;color:var(--accent-gold)">+7pp</span><span class="lift-label">renewal target · </span><span class="ab-sig">Power: 85% · <strong>Launching Sep 2025</strong></span></div>
+    </div>
+
+  </div>
+
+  <!-- ── SCORE CHARTS ── -->
+  <div class="score-chart-row">
+    <div class="chart-card" style="animation-delay:.1s">
+      <div class="chart-card-title">Avg subject scores by segment</div>
+      <div class="bar-chart" id="score-bars"></div>
+    </div>
+    <div class="chart-card" style="animation-delay:.15s">
+      <div class="chart-card-title">Score trajectory vs geo-index (UMAP projection)</div>
+      <div class="scatter-wrap" id="scatter-plot">
+        <div class="scatter-label-x">← Rural · Geo Index · Metro →</div>
+        <div class="scatter-label-y">Score trajectory</div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap">
+        <span style="font-size:10px;color:var(--seg-a)">● Seg A</span>
+        <span style="font-size:10px;color:var(--seg-b)">● Seg B</span>
+        <span style="font-size:10px;color:var(--seg-c)">● Seg C</span>
+        <span style="font-size:10px;color:var(--seg-d)">● Seg D</span>
+        <span style="font-size:10px;color:var(--seg-e)">● Seg E</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DISTRICT HEATMAP ── -->
+  <div class="heatmap-wrap" style="animation-delay:.15s">
+    <div class="sec-title">District × Subject Performance Heatmap — Top 10 Districts</div>
+    <div class="heatmap-grid" id="heatmap"></div>
+  </div>
+
+  <!-- ── OUTCOME METRICS ── -->
+  <div class="sec-title">Resulting Outcomes — Post-Segmentation Deployment</div>
+  <div class="outcomes-grid">
+    <div class="outcome-card" style="animation-delay:.05s">
+      <div class="outcome-icon">📈</div>
+      <div class="outcome-val" style="color:var(--accent-teal)">+23%</div>
+      <div class="outcome-label">Mean score improvement (Seg A+C combined, 18-month cohort)</div>
+      <div class="outcome-delta delta-up">↑ vs +9% baseline pre-segmentation</div>
+    </div>
+    <div class="outcome-card" style="animation-delay:.1s">
+      <div class="outcome-icon">🔄</div>
+      <div class="outcome-val" style="color:var(--accent-gold)">91%</div>
+      <div class="outcome-label">District contract renewal rate after DAS rollout</div>
+      <div class="outcome-delta delta-up">↑ from 78% the prior year</div>
+    </div>
+    <div class="outcome-card" style="animation-delay:.15s">
+      <div class="outcome-icon">⚡</div>
+      <div class="outcome-val" style="color:var(--accent-violet)">3.4×</div>
+      <div class="outcome-label">Faster intervention targeting via ML segment classifier</div>
+      <div class="outcome-delta delta-up">↑ 12 hrs → 3.5 hrs per counselor cycle</div>
+    </div>
+    <div class="outcome-card" style="animation-delay:.2s">
+      <div class="outcome-icon">💰</div>
+      <div class="outcome-val" style="color:var(--accent-sky)">$4.2M</div>
+      <div class="outcome-label">Incremental ARR from upsell to Seg B &amp; D schools</div>
+      <div class="outcome-delta delta-up">↑ ROI on A/B program: 11.4× in Y1</div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="footer">
+    <div class="footer-brand">EduSpark · 1975–2025</div>
+    <div>Segmentation Model v4.2 · Last retrained: Jan 2025 · Silhouette: 0.71 · F1: 0.88</div>
+    <div>Grades 8–12 · 2.1M students · 47 districts · 12,400+ schools</div>
+  </div>
+
+</div>
+
+<script>
+const segColors = { A: '#F5A623', B: '#1DC9A0', C: '#9B6BFF', D: '#FF6B6B', E: '#4DB8FF' };
+const segments = ['A','B','C','D','E'];
+const subjects = ['English','Math','Science','Geo'];
+const scores = {
+  A: [72, 85, 78, 64],
+  B: [88, 84, 92, 81],
+  C: [58, 61, 55, 48],
+  D: [66, 96, 98, 73],
+  E: [49, 74, 68, 71]
+};
+
+const barsContainer = document.getElementById('score-bars');
+subjects.forEach(subj => {
+  const row = document.createElement('div');
+  row.style.cssText = 'margin-bottom:10px';
+  row.innerHTML = `<div style="font-size:10px;color:var(--brand-muted);margin-bottom:4px">${subj}</div>`;
+  const inner = document.createElement('div');
+  inner.style.cssText = 'display:flex;gap:3px;align-items:center';
+  const si = subjects.indexOf(subj);
+  segments.forEach(seg => {
+    const val = scores[seg][si];
+    const bar = document.createElement('div');
+    bar.style.cssText = `flex:1;height:14px;background:${segColors[seg]};opacity:${0.4 + val/200};border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:600`;
+    bar.textContent = val;
+    inner.appendChild(bar);
+  });
+  row.appendChild(inner);
+  const legendRow = document.createElement('div');
+  legendRow.style.cssText = 'display:flex;gap:3px;margin-top:2px';
+  segments.forEach(seg => {
+    const l = document.createElement('div');
+    l.style.cssText = `flex:1;text-align:center;font-size:9px;color:${segColors[seg]}`;
+    l.textContent = seg;
+    legendRow.appendChild(l);
+  });
+  row.appendChild(legendRow);
+  barsContainer.appendChild(row);
+});
+
+const scatter = document.getElementById('scatter-plot');
+const dots = [
+  { seg:'A', x:28, y:72 },{ seg:'A', x:32, y:78 },{ seg:'A', x:25, y:68 },{ seg:'A', x:30, y:74 },{ seg:'A', x:27, y:71 },
+  { seg:'B', x:72, y:60 },{ seg:'B', x:78, y:57 },{ seg:'B', x:75, y:62 },{ seg:'B', x:80, y:55 },{ seg:'B', x:70, y:63 },
+  { seg:'C', x:45, y:22 },{ seg:'C', x:38, y:18 },{ seg:'C', x:50, y:25 },{ seg:'C', x:42, y:20 },{ seg:'C', x:48, y:27 },
+  { seg:'D', x:88, y:85 },{ seg:'D', x:92, y:89 },{ seg:'D', x:85, y:82 },{ seg:'D', x:90, y:87 },
+  { seg:'E', x:42, y:55 },{ seg:'E', x:38, y:60 },{ seg:'E', x:46, y:52 },{ seg:'E', x:40, y:58 },
+];
+dots.forEach(d => {
+  const el = document.createElement('div');
+  el.className = 'scatter-dot';
+  el.style.cssText = `left:${d.x}%;top:${100-d.y}%;background:${segColors[d.seg]}`;
+  scatter.appendChild(el);
+});
+
+const districts = ['Riverside USD','Oakland Unified','Mesa ISD','Fulton County','Denver PS','Atlanta City','Portland SD','Phoenix UHD','Boston PS','Clark County'];
+const heatmap = document.getElementById('heatmap');
+const headers = ['', 'Eng','Math','Sci','Geo','8th','9th','10th','11th','12th','Avg'];
+headers.forEach((h,i) => {
+  const cell = document.createElement('div');
+  cell.className = 'hm-cell hm-header';
+  cell.textContent = h;
+  heatmap.appendChild(cell);
+});
+
+districts.forEach((name, di) => {
+  const label = document.createElement('div');
+  label.className = 'hm-cell hm-row-label';
+  label.style.fontSize = '9px';
+  label.textContent = name;
+  heatmap.appendChild(label);
+  const vals = Array.from({length:9}, () => Math.round(45 + Math.random()*45 + (di < 5 ? 10 : -5)));
+  vals.forEach(v => {
+    const cell = document.createElement('div');
+    cell.className = 'hm-cell';
+    const pct = (v - 45) / 45;
+    const r = Math.round(30 + pct * 180);
+    const g = Math.round(200 - pct * 80);
+    const b = Math.round(140 - pct * 80);
+    cell.style.cssText = `background:rgba(${r},${g},${b},0.25);color:rgb(${r},${g},${b});font-size:10px`;
+    cell.textContent = v;
+    heatmap.appendChild(cell);
+  });
+  const avg = document.createElement('div');
+  avg.className = 'hm-cell';
+  const a = Math.round(vals.reduce((s,v)=>s+v,0)/vals.length);
+  avg.style.cssText = `background:rgba(100,160,220,0.2);color:#4DB8FF;font-weight:600;font-size:10px`;
+  avg.textContent = a;
+  heatmap.appendChild(avg);
+});
+</script>
