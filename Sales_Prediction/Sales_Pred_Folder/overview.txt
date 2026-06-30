@@ -1,3 +1,36 @@
+NATION
+# ═══════════════════════════════════════════════════════════════
+# national_arima.py
+# ARIMA-X model for national-level quarterly pharma sales
+# Includes: synthetic data generation, model fitting, evaluation
+# ═══════════════════════════════════════════════════════════════
+# ────────────────────────────────────────────────────────────────
+# STEP 2 — Stationarity check (ADF test)
+# ARIMA requires a stationary series (constant mean & variance).
+# If the series is non-stationary we difference it (d=1).
+# ADF null hypothesis: series has a unit root (non-stationary).
+# p < 0.05 → reject null → series IS stationary.
+# ────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+# STEP 3 — Train / test split
+# Hold out last 4 quarters as the validation window.
+# This mirrors real deployment: train on Q1-2020 → Q4-2022,
+# forecast Q1-2023 → Q4-2023, compare against known actuals.
+# ────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+# STEP 4 — Fit SARIMAX model
+# Order (p, d, q):
+#   p=1  — one autoregressive lag (TRx depends on previous quarter)
+#   d=1  — first-order differencing to remove trend non-stationarity
+#   q=1  — one moving average term (smooths short-term shocks)
+# Seasonal order (P, D, Q, s) with s=4 (quarterly):
+#   P=1, D=0, Q=1 — mild seasonal AR and MA terms
+# exog — include promo_spend and covid_flag as external regressors
+# ────────────────────────────────────────────────────────────────
+
+
+STATE
+Synthetic data
 
 COUNTY
 # ────────────────────────────────────────────────────────────────
@@ -34,38 +67,6 @@ COUNTY
 # This directly answers: "what makes county sales go up or down?"
 # ────────────────────────────────────────────────────────────────
 
-STATE
-Synthetic data
-
-NATION
-# ═══════════════════════════════════════════════════════════════
-# national_arima.py
-# ARIMA-X model for national-level quarterly pharma sales
-# Includes: synthetic data generation, model fitting, evaluation
-# ═══════════════════════════════════════════════════════════════
-# ────────────────────────────────────────────────────────────────
-# STEP 2 — Stationarity check (ADF test)
-# ARIMA requires a stationary series (constant mean & variance).
-# If the series is non-stationary we difference it (d=1).
-# ADF null hypothesis: series has a unit root (non-stationary).
-# p < 0.05 → reject null → series IS stationary.
-# ────────────────────────────────────────────────────────────────
-# ────────────────────────────────────────────────────────────────
-# STEP 3 — Train / test split
-# Hold out last 4 quarters as the validation window.
-# This mirrors real deployment: train on Q1-2020 → Q4-2022,
-# forecast Q1-2023 → Q4-2023, compare against known actuals.
-# ────────────────────────────────────────────────────────────────
-# ────────────────────────────────────────────────────────────────
-# STEP 4 — Fit SARIMAX model
-# Order (p, d, q):
-#   p=1  — one autoregressive lag (TRx depends on previous quarter)
-#   d=1  — first-order differencing to remove trend non-stationarity
-#   q=1  — one moving average term (smooths short-term shocks)
-# Seasonal order (P, D, Q, s) with s=4 (quarterly):
-#   P=1, D=0, Q=1 — mild seasonal AR and MA terms
-# exog — include promo_spend and covid_flag as external regressors
-# ────────────────────────────────────────────────────────────────
 
 ZIPs
 # ── 2. Route sparse ZIPs ─────────────────────────────────────
